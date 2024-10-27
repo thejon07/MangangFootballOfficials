@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create Axios instance
 const instance = axios.create({
-  baseURL: `${import.meta.env.VITE_BACKEND_URL}` // Use Vite's method to access environment variables
+  baseURL: "https://dreamers-backend-git-master-bijons-projects-01181d74.vercel.app" // Use Vite's method to access environment variables
 });
 
 // Add Axios Interceptor to handle token refresh
