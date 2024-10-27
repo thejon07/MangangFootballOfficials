@@ -11,7 +11,7 @@ const debounce = (fn, delay) => {
 const mainfunction = async (title) => {
     try {
         // Use POST and send `title` in the request body
-        const searchdata = await axios.post("/users/searchpost", { title });
+        const searchdata = await axios.post("https://dreamersbackend.onrender.com/users/searchpost", { title });
         return searchdata.data; // Return actual data
     } catch (error) {
         console.error("Error while getting data:", error);
