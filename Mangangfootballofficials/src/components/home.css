@@ -1,0 +1,13 @@
+
+:root{
+    --profile-color:#97989F;
+   }
+
+.profile-color{
+color:var(--profile-color)
+}
+@media only screen and (max-width: 600px) {
+    .floating{
+        display:none !important;
+    }
+}

@@ -1,184 +1,124 @@
-import React, { useState } from 'react';
-import logo from "../assets/logo.png"
-function Navbar() {
-  const [toggle, setToggle] = useState(false);
+import React, { useEffect, useState, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {debounce} from "../utils/debounce";
+import {mainfunction} from "../utils/debounce"; // Assuming mainfunction exists
+import dreamer from "../assets/dreamer.png";
+import search from "../assets/search.png";
+import useAuth from '../Private/useAuth';
 
-  const handleToggle = () => {
-    setToggle(prev => !prev);
-    console.log("toggle");
+function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchData, setSearchData] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const navigate = useNavigate();
+
+  const handleGetPostData = useCallback(
+    debounce(async (value) => {
+      const data = await mainfunction(value);
+      setSearchData(data.data);
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    if (searchValue) {
+      handleGetPostData(searchValue);
+    }
+  }, [searchValue, handleGetPostData]);
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  const handleNavigate = (id) => {
+    navigate(`/readblog/${id}`);
+    setSearchValue(""); // Clear the search input after navigation
+    setSearchData([]); // Optionally clear the search results after navigation
   };
 
   return (
-    <>
-      <nav className="bg-black">
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-          <div className="relative flex h-16 items-center justify-between">
-            <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-              <button
-                type="button"
-                className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                aria-controls="mobile-menu"
-                aria-expanded="false"
-              >
-                <span className="absolute -inset-0.5"></span>
-                <span className="sr-only">Open main menu</span>
-                <svg
-                  className="block h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-                <svg
-                  className="hidden h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+    <div className='flex justify-center bg-gray-100 shadow-md'>
+      <nav className='w-11/12 lg:w-10/12 flex justify-between items-center h-20 p-3'>
+        <Link to="/">
+          <div className='object-cover w-24 h-24'>
+            <img src={dreamer} alt="Dreamer Logo" />
+          </div>
+        </Link>
+
+        <div className="md:hidden">
+          <button onClick={toggleMenu} className="focus:outline-none">
+            <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </button>
+        </div>
+
+        <div className={`hidden md:flex flex-grow justify-between items-center`}>
+          <ul className='flex gap-6 font-semibold text-sm'>
+            <Link to="/" className="hover:text-blue-500"><li>Home</li></Link>
+            <Link to="/blog" className="hover:text-blue-500"><li>Blog</li></Link>
+            <Link to="/about" className="hover:text-blue-500"><li>About Us</li></Link>
+            <Link to="/createpost" className="hover:text-blue-500"><li>Post a Blog</li></Link>
+            {useAuth() ? 
+              <Link to="/dashboard" className="hover:text-blue-500"><li>Dashboard</li></Link> :
+              <Link to="/signup" className="hover:text-blue-500"><li>Sign in</li></Link>
+            }
+          </ul>
+
+          <div className='relative'>
+            <div className="flex items-center gap-2">
+              <input
+                type="search"
+                name="search"
+                id="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                placeholder='Search'
+                className='border pl-2 pr-10 py-1 rounded-lg text-sm w-56'
+              />
+              <button className='absolute right-2 top-1/2 transform -translate-y-1/2'>
+                <img src={search} className='w-5 h-5' alt="Search" />
               </button>
             </div>
-            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-              <div className="flex flex-shrink-0 items-center">
-                <img
-                  className="h-8 w-auto"
-                  src={logo}
-                  alt="Your Company"
-                />
+            {searchValue && (
+              <div className='absolute mt-2 bg-white border rounded-lg shadow-lg p-3 z-40 max-h-60 overflow-y-auto w-full'>
+                <ul>
+                  {searchData.map((data) => (
+                    <li
+                      key={data._id}
+                      onClick={() => handleNavigate(data._id)}
+                      className="p-1 hover:bg-gray-200 rounded-md cursor-pointer"
+                    >
+                      {data.title}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="hidden sm:ml-6 sm:block">
-                <div className="flex space-x-4">
-                  <a
-                    href="#"
-                    className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                    aria-current="page"
-                  >
-                    Dashboard
-                  </a>
-                  <a
-                    href="#"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Team
-                  </a>
-                  <a
-                    href="#"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    News
-                  </a>
-                  <a
-                    href="#"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Match
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <button
-                type="button"
-                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span className="absolute -inset-1.5"></span>
-                <span className="sr-only">View notifications</span>
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-                  />
-                </svg>
-              </button>
-
-              <div className="relative ml-3">
-                <div>
-                  <button
-                    type="button"
-                    className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    id="user-menu-button"
-                    aria-expanded="false"
-                    aria-haspopup="true"
-                    onClick={handleToggle}
-                  >
-                    <span className="absolute -inset-1.5"></span>
-                    <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
-                  </button>
-                </div>
-
-                {toggle && (
-                  <div
-                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="user-menu-button"
-                    tabIndex="-1"
-                  >
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1">
-                      Your Profile
-                    </a>
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1">
-                      Settings
-                    </a>
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1">
-                      Sign out
-                    </a>
-                  </div>
-                )}
-              </div>
-            </div>
+            )}
           </div>
         </div>
-        <div className="sm:hidden" id="mobile-menu">
-          <div className="space-y-1 px-2 pb-3 pt-2">
-            <a
-              href="#"
-              className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-              aria-current="page"
-            >
-              Dashboard
-            </a>
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Team
-            </a>
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Projects
-            </a>
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Calendar
-            </a>
-          </div>
+
+        <div className={`md:hidden absolute top-20 left-0 z-40 w-full bg-white p-4 shadow-lg transition-transform duration-300 ease-in-out ${isOpen ? 'block' : 'hidden'}`}>
+          <ul className='flex flex-col gap-4'>
+            <Link to="/" onClick={toggleMenu}><li className="hover:text-blue-500">Home</li></Link>
+            <Link to="/blog" onClick={toggleMenu}><li className="hover:text-blue-500">Blog</li></Link>
+            <Link to="/about" onClick={toggleMenu}><li className="hover:text-blue-500">About Us</li></Link>
+            <Link to="/createpost" onClick={toggleMenu}><li className="hover:text-blue-500">Post a Blog</li></Link>
+            <Link to="/signup" onClick={toggleMenu}><li className="hover:text-blue-500">Sign in</li></Link>
+            <div className='flex flex-col gap-2 mt-4'>
+              <input
+                type="search"
+                name="search"
+                id="search"
+                placeholder='Search'
+                className='border pl-2 py-1 rounded-lg text-sm w-full'
+              />
+              <button className='w-full flex justify-center border rounded-lg'>
+                <img src={search} className='w-6 h-6' alt="Search" />
+              </button>
+            </div>
+          </ul>
         </div>
       </nav>
-    </>
+    </div>
   );
 }
 

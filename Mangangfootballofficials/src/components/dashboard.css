@@ -1,0 +1,48 @@
+body {
+    background-color: #f5f5f7; /* Light background for a clean look */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* System font for a clean feel */
+  }
+  
+  h1, h2, h3 {
+    margin: 0; /* Remove default margins */
+  }
+  
+  .main {
+    padding: 20px; /* Add padding around the main content */
+  }
+  
+  /* Set fixed height for all cards */
+  .card {
+    height: 280px; /* Adjusted height for uniformity */
+  }
+  
+  /* Ensure cards have the same height */
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribute space evenly */
+    height: 100%; /* Make sure card container uses full height */
+  }
+  
+  /* Image styles for uniformity */
+  .card img {
+    height: 160px; /* Adjust height as necessary */
+    object-fit: cover; /* Ensure images cover area without distortion */
+  }
+  
+  /* Button styling */
+  button {
+    cursor: pointer; /* Change cursor on hover */
+  }
+  
+  button:hover {
+    transform: translateY(-2px); /* Subtle lift on hover */
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .main {
+      padding: 10px; /* Reduce padding on smaller screens */
+    }
+  }
+  

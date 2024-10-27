@@ -1,0 +1,13 @@
+:root{
+    --bg-color : #E8E8EA;
+}
+
+.footer-bg{
+  background-color: var(--bg-color);
+}
+.sec-3 li{
+    margin-top:6px;
+}
+.sec-2 li{
+    margin-top:3px;
+}

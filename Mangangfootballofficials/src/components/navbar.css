@@ -1,0 +1,13 @@
+:root{
+ --secondary-color:#3B3C4A;
+ --searchbar-background-color:#F4F4F5;
+}
+.navbar-flex-container{
+    color:var(--secondary-color)
+}
+.mid-list{
+  color:var(--secondary-color)
+}
+.last-li input{
+  background-color:var(--searchbar-background-color)
+}
