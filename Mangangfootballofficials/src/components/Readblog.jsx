@@ -6,7 +6,7 @@ function Readblog() {
     const [data, setdata] = useState({});
     const { id } = useParams();
     const instance = axios.create({
-        baseURL: "http://localhost:4000"
+        baseURL: "https://dreamersbackend.onrender.com"
     });
 
     useEffect(() => {
