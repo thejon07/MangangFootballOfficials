@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create Axios instance
 const instance = axios.create({
-  baseURL: "https://dreamersbackend.onrender.com" // Use Vite's method to access environment variables
+  baseURL: "https://dreamersbackend.onrender.com" || "http://localhost:4000" // Use Vite's method to access environment variables
 });
 
 // Add Axios Interceptor to handle token refresh
